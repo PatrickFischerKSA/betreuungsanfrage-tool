@@ -1,7 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {generate,example,docx} from './app.mjs';
+import {generate,example,docx,changeWorkType} from './app.mjs';
 test('vollständiges Beispiel folgt dem Gerüst und enthält keine Platzhalter',()=>{const r=generate(example);assert.ok(!/\[/.test(r.body));assert.ok(r.body.startsWith('Guten Tag Frau Muster\n\n'));assert.ok(r.body.endsWith('Lea Beispiel\nF3a'));assert.match(r.body,/grundsätzlich bereit/);assert.match(r.body,/Wie beeinflussen TikTok/)});
 test('leere Angaben bleiben als erkennbare Platzhalter erhalten',()=>assert.match(generate({}).body,/\[Thema\]/));
 test('neutrale Anrede, optionale Klasse und Satzschluss',()=>{const r=generate({...example,salutation:'neutral',teacher:'Alex Muster',className:'',topic:'einem Thema.'});assert.ok(r.body.startsWith('Guten Tag Alex Muster'));assert.ok(r.body.endsWith('Lea Beispiel'));assert.ok(!r.body.includes('Thema. beschäftigen'))});
 test('DOCX ist ein ZIP-Paket und maskiert Sonderzeichen',()=>{const bytes=docx('Test & Prüfung','<Text>\nGrüsse');assert.equal(new DataView(bytes.buffer).getUint32(0,true),0x04034b50);const decoded=new TextDecoder().decode(bytes);assert.ok(decoded.includes('Test &amp; Prüfung'));assert.ok(decoded.includes('&lt;Text&gt;'));assert.ok(decoded.includes('word/document.xml'))});
+
+test('Maturarbeit wird in Betreff, Einleitung, Anfrage und Word-Inhalt verwendet',()=>{const r=generate({...example,workType:'ma'});assert.equal(r.subject,'Anfrage zur Betreuung meiner Maturarbeit');assert.match(r.body,/Im Rahmen meiner Maturarbeit/);assert.match(r.body,/Betreuung meiner Maturarbeit zu übernehmen/);assert.ok(!r.body.includes('Selbständigen Arbeit'));assert.ok(new TextDecoder().decode(docx(r.subject,r.body)).includes('meiner Maturarbeit'))});
+test('Umschalten erhält manuelle Änderungen und funktioniert in beide Richtungen',()=>{const text='Anfrage zur Selbständigen Arbeit. Meine eigene Ergänzung bleibt.';assert.equal(changeWorkType(text,'ma'),'Anfrage zur Maturarbeit. Meine eigene Ergänzung bleibt.');assert.equal(changeWorkType(changeWorkType(text,'ma'),'sa'),text);assert.equal(generate({...example,workType:'sa'}).subject,generate(example).subject)});

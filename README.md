@@ -1,8 +1,10 @@
-# Betreuungsanfrage für die Selbständige Arbeit
+# Betreuungsanfrage für die Selbständige Arbeit und Maturarbeit
 
 Ein deutschsprachiges Formular auf Basis der Word-Vorlage «Modelltext Betreuungsanfrage Selbständige Arbeit». Aus eigenen Angaben entsteht eine bearbeitbare E-Mail an eine Betreuungsperson.
 
 ## Funktionen
+
+- Umschaltung zwischen Selbständiger Arbeit und Maturarbeit; passt Betreff, Mailtext, Seitentitel und Export-Dateinamen an und erhält bestehende Eingaben sowie manuelle Textänderungen
 
 - Formular mit Formulierungshilfen und Live-Vorschau
 - Beispiel, Fortschrittsanzeige und Checkliste
